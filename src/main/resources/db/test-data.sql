@@ -9,7 +9,7 @@ insert into MANUFACTURER (name) values ('Nivalis Therapeutics, Inc.');
 insert into MANUFACTURER (name) values ('TransAct Technologies Incorporated');
 insert into MANUFACTURER (name) values ('SAExploration Holdings, Inc.');
 
-
+insert into cart values (1, 'ACTIVE');
 
 insert into PRODUCT (title, cost, MANUFACTURE_DATE, MANUFACTURER_ID) values ('Cloves - Whole', 321.7, '5/2/2021', 1);
 insert into PRODUCT (title, cost, MANUFACTURE_DATE, MANUFACTURER_ID) values ('Apple - Northern Spy', 3483.35, '6/17/2021', 5);
