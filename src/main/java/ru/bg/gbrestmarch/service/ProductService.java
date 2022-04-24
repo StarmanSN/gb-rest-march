@@ -6,12 +6,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bg.gbrestmarch.controller.dto.ProductDto;
+import ru.bg.gbrestmarch.controller.dto.ProductManufacturerDto;
+import ru.bg.gbrestmarch.controller.dto.mapper.ProductMapper;
+import ru.bg.gbrestmarch.dao.ManufacturerDao;
 import ru.bg.gbrestmarch.dao.ProductDao;
+import ru.bg.gbrestmarch.entity.Manufacturer;
 import ru.bg.gbrestmarch.entity.Product;
 import ru.bg.gbrestmarch.entity.enums.Status;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,31 +25,40 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductDao productDao;
+    private final ProductMapper productMapper;
+    private final ManufacturerDao manufacturerDao;
+
+    @Transactional
+    public void init() {
+//        Manufacturer testManufacturer = Manufacturer.builder()
+//                .name("Test")
+//                .products(new HashSet<>(productDao.findAll()))
+//                .build();
+//        manufacturerDao.save(testManufacturer);
+        Product product = productDao.findById(1L).get();
+        product.setManufacturer(manufacturerDao.findById(2L).get());
+        productDao.save(product);
+    }
 
     public ProductDto save(ProductDto productDto) {
-        Product savingProduct;
-        if (productDto.getId() != null) {
-            Optional<Product> productFromDBOptional = productDao.findById(productDto.getId());
-            savingProduct = productFromDBOptional.orElseGet(Product::new);
-        } else {
-            savingProduct = new Product();
+        Product product = productMapper.toProduct(productDto, manufacturerDao);
+        if (product.getId() != null) {
+            productDao.findById(productDto.getId()).ifPresent(
+                    (p) -> product.setVersion(p.getVersion())
+            );
         }
-        savingProduct.setTitle(productDto.getTitle());
-        savingProduct.setCost(productDto.getCost());
-        savingProduct.setManufactureDate(productDto.getManufactureDate());
-        savingProduct.setStatus(productDto.getStatus());
-        savingProduct = productDao.save(savingProduct);
-        productDto.setId(savingProduct.getId());
-        return productDto;
+        return productMapper.toProductDto(productDao.save(product));
     }
 
     @Transactional(readOnly = true)
-    public Product findById(Long id) {
-        return productDao.findById(id).orElse(null);
+    public ProductDto findById(Long id) {
+        return productMapper.toProductDto(productDao.findById(id).orElse(null));
     }
 
-    public List<Product> findAll() {
-        return productDao.findAll();
+    public List<ProductDto> findAll() {
+        return productDao.findAll().stream()
+                .map(productMapper::toProductDto)
+                .collect(Collectors.toList());
     }
 
     public void deleteById(Long id) {
@@ -60,5 +75,12 @@ public class ProductService {
             p.setStatus(Status.DISABLED);
             productDao.save(p);
         });
+    }
+
+    public List<ProductManufacturerDto> findFullInfo() {
+        return productDao.findAll()
+                .stream()
+                .map(productMapper::toProductManufacturerDto)
+                .collect(Collectors.toList());
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.bg.gbrestmarch.controller.dto.CartDto;
 import ru.bg.gbrestmarch.controller.dto.ProductDto;
+import ru.bg.gbrestmarch.controller.dto.ProductManufacturerDto;
 import ru.bg.gbrestmarch.entity.Cart;
 import ru.bg.gbrestmarch.entity.Product;
 import ru.bg.gbrestmarch.service.CartService;
@@ -25,17 +26,22 @@ public class ProductRestController {
     private final CartService cartService;
 
     @GetMapping
-    public List<Product> getProductList() {
+    public List<ProductDto> getProductList() {
         return productService.findAll();
+    }
+
+    @GetMapping("/info")
+    public List<ProductManufacturerDto> getFullInfoProductList() {
+        return productService.findFullInfo();
     }
 
     @GetMapping("/{productId}")
     public ResponseEntity<?> getProduct(@PathVariable("productId") Long id) {
-        Product product;
+        ProductDto productDto;
         if (id != null) {
-            product = productService.findById(id);
-            if (product != null) {
-                return new ResponseEntity<>(product, HttpStatus.OK);
+            productDto = productService.findById(id);
+            if (productDto != null) {
+                return new ResponseEntity<>(productDto, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
