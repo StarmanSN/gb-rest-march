@@ -22,11 +22,16 @@ public class Order {
     private Long id;
     @Column(name = "order_date", updatable = false)
     private LocalDate orderDate;
-    @Column(name = "order_num")
-    private int orderNum;
+    @ManyToOne
+    @JoinColumn(name = "product_id",foreignKey = @ForeignKey(name = "fk_order_details_product"))
+    private Product product;
+    @Column(name = "quantity")
+    private int quantity;
+    @Column(name = "cost")
+    private double cost;
     @Column(name = "amount")
     private double amount;
-    @Column(name = "customer_name")
-    private String customerName;
+
+
 
 }

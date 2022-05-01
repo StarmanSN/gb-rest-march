@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.bg.gbrestmarch.controller.dto.ProductDto;
 import ru.bg.gbrestmarch.dao.OrderDao;
 import ru.bg.gbrestmarch.dao.ProductDao;
 import ru.bg.gbrestmarch.entity.Order;
-import ru.bg.gbrestmarch.entity.Product;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,23 +28,22 @@ public class OrderService {
         return orderDao.findById(id).orElse(null);
     }
 
-    public Order createOrder(Order order) {
-        orderDao.findById(order.getId());
+    public void createOrder(Order order) {
         orderDao.save(order);
-        return order;
     }
 
     public void deleteOrderById(Long id) {
         orderDao.deleteById(id);
     }
 
-    public Product addProduct(Product product) {
-
-        return product;
+    public ProductDto addProduct(ProductDto productDto) {
+        if (productDto != null) {
+            productDao.findById(productDto.getId());
+        }
+        return productDto;
     }
 
     public void deleteProduct(Long id) {
-        Product product = productDao.getById(id);
-
+        productDao.deleteById(id);
     }
 }

@@ -76,14 +76,20 @@ where CART_ID > 0;
 
 CREATE TABLE ORDERS
 (
-    ID            BIGSERIAL    NOT NULL PRIMARY KEY,
-    ORDER_DATE    DATE         NOT NULL,
-    ORDER_NUM     INT          NOT NULL,
-    AMOUNT        INT          NOT NULL,
-    CUSTOMER_NAME VARCHAR(255) NOT NULL
+    ID         BIGSERIAL        NOT NULL PRIMARY KEY,
+    ORDER_DATE DATE             NOT NULL,
+    PRODUCT_ID BIGINT           NOT NULL,
+    QUANTITY   BIGINT           NOT NULL,
+    COST       DECIMAL(10, 2)   NOT NULL,
+    AMOUNT     DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT fk_order_details_product
+        FOREIGN KEY (PRODUCT_ID)
+            REFERENCES product (ID)
 );
 
-insert into orders values (1, current_date, 4, 250, 1);
+insert into orders
+values (1, current_date, 1, 2, 65, 130);
 
 CREATE TABLE ORDER_DETAILS
 (
@@ -104,4 +110,4 @@ CREATE TABLE ORDER_DETAILS
             REFERENCES ORDERS (ID)
 );
 
-drop table order_details;
+drop table orders;
