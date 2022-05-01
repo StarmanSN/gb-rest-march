@@ -25,7 +25,7 @@ CREATE TABLE PRODUCT
     LAST_MODIFIED_BY   VARCHAR(255),
     LAST_MODIFIED_DATE TIMESTAMP,
     STATUS             VARCHAR(20)    NOT NULL DEFAULT 'ACTIVE',
-        UNIQUE (TITLE)
+    UNIQUE (TITLE)
 );
 
 CREATE TABLE CART
@@ -62,10 +62,52 @@ ALTER TABLE PRODUCT
     ADD COLUMN LAST_MODIFIED_DATE TIMESTAMP;
 
 ALTER TABLE PRODUCT
-    ADD COLUMN STATUS VARCHAR(20) NOT NULL DEFAULT 'ACTIVE';
+    ADD COLUMN Manufacturer_id bigint;
 
 SELECT *
 FROM PRODUCT;-- WHERE ID=106;
 
-delete from product where ID > 0;
-delete from cart_product where CART_ID > 0;
+delete
+from product
+where ID > 0;
+delete
+from cart_product
+where CART_ID > 0;
+
+CREATE TABLE ORDERS
+(
+    ID         BIGSERIAL        NOT NULL PRIMARY KEY,
+    ORDER_DATE DATE             NOT NULL,
+    PRODUCT_ID BIGINT           NOT NULL,
+    QUANTITY   BIGINT           NOT NULL,
+    COST       DECIMAL(10, 2)   NOT NULL,
+    AMOUNT     DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT fk_order_details_product
+        FOREIGN KEY (PRODUCT_ID)
+            REFERENCES product (ID)
+);
+
+insert into orders
+values (1, current_date, 1, 2, 65, 130);
+
+CREATE TABLE ORDER_DETAILS
+(
+    ID         BIGSERIAL        NOT NULL PRIMARY KEY,
+    ORDER_ID   BIGINT           NOT NULL,
+    PRODUCT_ID BIGINT           NOT NULL,
+    QUANTITY   BIGINT           NOT NULL,
+    COST       DECIMAL(10, 2)   NOT NULL,
+    AMOUNT     DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT fk_order_details_product
+        FOREIGN KEY (PRODUCT_ID)
+            REFERENCES product (ID),
+
+
+    CONSTRAINT fk_order_details_order
+        FOREIGN KEY (ORDER_ID)
+            REFERENCES ORDERS (ID)
+);
+
+drop table orders;

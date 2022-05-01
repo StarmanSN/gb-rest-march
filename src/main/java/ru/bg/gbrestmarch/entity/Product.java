@@ -33,18 +33,18 @@ public class Product {
     private BigDecimal cost;
     @Column(name = "manufacture_date")
     private LocalDate manufactureDate;
-//    @ManyToOne
-//    @JoinColumn(name = "manufacturer_id")
-//    private Manufacturer manufacturer;
+    @ManyToOne
+    @JoinColumn(name = "manufacturer_id")
+    private Manufacturer manufacturer;
 
     @Version
     @Column(name = "VERSION")
     private int version;
     @CreatedBy
-    @Column(name = "CREATED_BY")
+    @Column(name = "CREATED_BY", updatable = false)
     private String createdBy;
     @CreatedDate
-    @Column(name = "CREATED_DATE")
+    @Column(name = "CREATED_DATE", updatable = false)
     private LocalDateTime createdDate;
     @LastModifiedBy
     @Column(name = "LAST_MODIFIED_BY")
@@ -57,11 +57,11 @@ public class Product {
     @Column(name = "status")
     private Status status;
 
-//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinTable(name = "cart_product",
-//    joinColumns = @JoinColumn(name = "product_id"),
-//    inverseJoinColumns = @JoinColumn(name = "cart_id"))
-//    private Set<Cart> carts;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "cart_product",
+    joinColumns = @JoinColumn(name = "product_id"),
+    inverseJoinColumns = @JoinColumn(name = "cart_id"))
+    private Set<Cart> carts;
 
     @Override
     public String toString() {
